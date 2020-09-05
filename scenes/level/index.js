@@ -46,12 +46,12 @@ const LevelScreen = ({ route, navigation }) => {
 
     const fetchGoals = async(levelId) => {
         const allGoalsFromLevel = await getGoalsByLevelId(levelId);
+        setLoadingGoals(false);
         if (allGoalsFromLevel && allGoalsFromLevel.length) {
-            setTimeout(() => {
-                setLoadingGoals(false);
-                setWithError(false);
-                setGoals(allGoalsFromLevel);
-            }, 1000);
+            setWithError(false);
+            setGoals(allGoalsFromLevel);
+        } else {
+            setWithError(true);
         }
     };
 

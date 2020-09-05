@@ -48,6 +48,31 @@ export const updateGameName = async () => {
     }
 }
 
+export const getAvailableGames = async () => {
+    try {
+        const { body } = await supabase
+            .from('games')
+            .select('*')
+            .order('id', 'sortAscending')
+            .filter('available', 'eq', 1);
+        return body;
+    } catch (error) {
+        console.log('error', error);
+    }
+}
+
+export const getSettings = async () => {
+    try {
+        const { body } = await supabase
+            .from('settings')
+            .select('*')
+            .order('id', 'sortAscending');
+        return body;
+    } catch (error) {
+        console.log('error', error);
+    }
+}
+
 export const getLevelsByGameId = async (gameId) => {
     try {
         const { body } = await supabase

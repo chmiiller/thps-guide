@@ -2,9 +2,9 @@ import React, { useState, useLayoutEffect } from 'react';
 import { ActivityIndicator, Button, FlatList, StatusBar, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { ATOM_BLUE, ATOM_GRAY, ATOM_YELLOW } from '../../constants/colors';
-import ErrorMessage from '../../components/ErrorMessage';
-import { getLevelsByGameId } from '../../api/index';
+import { ATOM_BLUE, ATOM_GRAY, ATOM_YELLOW } from '../../../constants/colors';
+import ErrorMessage from '../../../components/ErrorMessage';
+import { getAvailableGames } from '../../../api/index';
 
 const styles = StyleSheet.create({
     safeArea: {
@@ -24,28 +24,25 @@ const styles = StyleSheet.create({
     },
 });
 
-const LevelSelectScreen = ({ navigation }) => {
-    const [loadingLevels, setLoadingLevels] = useState(true);
+const GameSelectScreen = ({ navigation }) => {
+    const [loadingGames, setLoadingGames] = useState(true);
     const [withError, setWithError] = useState(false);
-    const [levels, setGameLevels] = useState([]);
+    const [games, setGames] = useState([]);
 
     useLayoutEffect(() => {
-        setLoadingLevels(true);
+        setLoadingGames(true);
         setWithError(false);
         fetchLevels();
     }, []);
 
-    const OpenButton = (item) => {
-        if (item && item.name) {
+    const SelectGameButton = (item) => {
+        if (item && item.title) {
             return (
                 <Button
                     key={item.id}
-                    title={item.name}
+                    title={item.title}
                     onPress={() => {
-                        navigation.navigate('Level', {
-                            itemId: item.id,
-                            title: item.name,
-                        });
+                        console.log(' >>>>>>>>>>>>>>>>>>>>>>>>>>>>> selected game: ' + JSON.stringify(item,null,'    '));
                     }}
                 />
             );
@@ -53,29 +50,29 @@ const LevelSelectScreen = ({ navigation }) => {
     }
 
     const fetchLevels = async() => {
-        const allLevelsFromSecondGame = await getLevelsByGameId(2);
-        if (allLevelsFromSecondGame && allLevelsFromSecondGame.length) {
-            setGameLevels(allLevelsFromSecondGame);
-            setLoadingLevels(false);
+        const availableGames = await getAvailableGames();
+        setLoadingGames(false);
+        if (availableGames && availableGames.length) {
+            setGames(availableGames);
             setWithError(false);
         } else {
             setWithError(true);
         }
     };
 
-    const renderLevelList = () => {
+    const renderGamesList = () => {
         if (withError) {
             return ( <ErrorMessage /> );
         }
 
-        if ( loadingLevels ) {
+        if ( loadingGames ) {
             return ( <ActivityIndicator size="large" color={ATOM_YELLOW} /> );
         } else {
             return (
                 <FlatList
-                    style={styles.flatList}
-                    data={levels}
-                    renderItem={({item}) => OpenButton(item)}
+                    style={{marginTop: 40}}
+                    data={games}
+                    renderItem={({item}) => SelectGameButton(item)}
                 />
             );
         }
@@ -85,10 +82,10 @@ const LevelSelectScreen = ({ navigation }) => {
         <SafeAreaView style={styles.safeArea}>
             <StatusBar barStyle="light-content" backgroundColor="#6a51ae" />
             <View style={styles.container}>
-                {renderLevelList()}
+                {renderGamesList()}
             </View>
         </SafeAreaView>
     );
 }
 
-export default LevelSelectScreen;
+export default GameSelectScreen;

@@ -1,20 +1,21 @@
 import React, { useState, useLayoutEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, ScrollView, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 
-import { ATOM_BLUE, ATOM_GRAY, ATOM_YELLOW, GRAY3 } from '../../constants/colors';
+import { ATOM_BLUE, ATOM_GRAY, ATOM_YELLOW } from '../../../constants/colors';
 
 const styles = StyleSheet.create({
-    nailedButton: {
-        alignItems: 'center',
-        marginVertical: 12,
-        marginHorizontal: 16,
-        borderRadius: 10,
-        borderColor: ATOM_YELLOW,
-        borderWidth: 1,
-        height: 40,
-        padding: 10,
+    safeArea: {
+        backgroundColor: ATOM_GRAY,
+        flex: 1,
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    container: {
+        backgroundColor: ATOM_GRAY,
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     scrollView: {
         backgroundColor:ATOM_GRAY,
@@ -23,23 +24,19 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
         margin: 16,
     },
-    nailedText: {
-        fontSize: 14,
-        textAlign: 'center',
-        fontWeight: 'bold',
-        color: ATOM_YELLOW
+    flatList: {
+        marginTop: 40,
     },
 });
 
-const GoalScreen = ({ route, navigation }) => {
-    const [goalTitle, setGoalTitle] = useState(route.params.title);
-    const [goalContent, setGoalContent] = useState(route.params.content);
-    
+const DisclaimerScreen = ({ route, navigation }) => {
+    const [item, setItem] = useState(route.params.item);
+
     useLayoutEffect(() => {
         navigation.setOptions({
-            title: !goalTitle ? 'Goal' : goalTitle,
+            title: !item.title ? 'About' : item.title,
         });
-    }, [navigation, goalTitle]);
+    }, [navigation, item]);
 
     const tableStyle = `
         * { font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: ${ATOM_YELLOW}; }
@@ -54,7 +51,7 @@ const GoalScreen = ({ route, navigation }) => {
             font-size: 14px;
         }
     `
-
+    
     return (
         <ScrollView style={styles.scrollView} contentContainerStyle={{flexGrow: 1}}>
             <WebView
@@ -67,19 +64,16 @@ const GoalScreen = ({ route, navigation }) => {
                             <head><meta name="viewport" content="width=device-width"></head>
                             <style>${tableStyle}</style>
                             <body style="margin: 0; padding: 0;">
-                                <div style="height: 600px; width: 100%;">${goalContent}</div>
+                                <div style="height: 600px; width: 100%;">${item.content}</div>
                             </body>
                         </html>
                     `
                 }}
                 automaticallyAdjustContentInsets={false}
             />
-            <TouchableOpacity style={styles.nailedButton}>
-                <Text style={styles.nailedText}>NAILED2 IT</Text>
-            </TouchableOpacity>
             <View style={{height: 100}}></View>
         </ScrollView>
     );
 }
 
-export default GoalScreen;
+export default DisclaimerScreen;
