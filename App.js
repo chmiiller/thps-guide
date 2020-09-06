@@ -8,6 +8,9 @@
 
 import 'react-native-gesture-handler';
 import React from 'react';
+
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/es/integration/react'
 import 'localstorage-polyfill'; 
 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -17,6 +20,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { ATOM_BLUE, ATOM_GRAY, ATOM_YELLOW } from './constants/colors';
+
+import reduxStore, { persistor } from './reduxStore';
 
 import HomeScreen from './scenes/home';
 import CharsScreen from './scenes/chars';
@@ -83,7 +88,13 @@ const App = () => {
 		);
 	}
 
-  return navigation();
+  return (
+	<Provider store={reduxStore}>
+		<PersistGate loading={null} persistor={persistor}>
+			{navigation()}
+		</PersistGate>
+	</Provider>
+  );
 };
 
 export default App;

@@ -1,4 +1,5 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
+import { connect } from 'react-redux';
 import { ActivityIndicator, Button, FlatList, StatusBar, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -24,16 +25,26 @@ const styles = StyleSheet.create({
     },
 });
 
-const LevelSelectScreen = ({ navigation }) => {
+const LevelSelectScreen = ({ navigation, settings }) => {
     const [loadingLevels, setLoadingLevels] = useState(true);
     const [withError, setWithError] = useState(false);
     const [levels, setGameLevels] = useState([]);
+    const [currentGame, setCurrentGame] = useState(null);
 
     useLayoutEffect(() => {
         setLoadingLevels(true);
         setWithError(false);
-        fetchLevels();
-    }, []);
+
+        if (settings && settings.currentGame) {
+            setCurrentGame(settings.currentGame);
+        }
+    }, [settings]);
+
+    useEffect(() => {
+        if (currentGame && currentGame.id) {
+            fetchLevels(currentGame.id);
+        }
+    }, [ currentGame ]);
 
     const OpenButton = (item) => {
         if (item && item.name) {
@@ -52,8 +63,8 @@ const LevelSelectScreen = ({ navigation }) => {
         }
     }
 
-    const fetchLevels = async() => {
-        const allLevelsFromSecondGame = await getLevelsByGameId(2);
+    const fetchLevels = async(gameId) => {
+        const allLevelsFromSecondGame = await getLevelsByGameId(gameId);
         if (allLevelsFromSecondGame && allLevelsFromSecondGame.length) {
             setGameLevels(allLevelsFromSecondGame);
             setLoadingLevels(false);
@@ -91,4 +102,9 @@ const LevelSelectScreen = ({ navigation }) => {
     );
 }
 
-export default LevelSelectScreen;
+const mapStateToProps = (state) => {
+    return {
+        settings: state.settings,
+    };
+};
+export default connect(mapStateToProps)(LevelSelectScreen);

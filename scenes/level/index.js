@@ -1,4 +1,5 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
+import { connect } from 'react-redux';
 import { ActivityIndicator, ScrollView, StatusBar, StyleSheet, View, } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -26,12 +27,14 @@ const styles = StyleSheet.create({
     },
 });
 
-const LevelScreen = ({ route, navigation }) => {
+const LevelScreen = ({ route, navigation, settings }) => {
     const [screenTitle, setScreenTitle] = useState(route.params.title);
     const [goals, setGoals] = useState([]);
     const [loadingGoals, setLoadingGoals] = useState(true);
     const [withError, setWithError] = useState(false);
+    const [stateCompleted, setStateCompleted] = useState({});
     const levelId = route.params.itemId;
+    
     
     useLayoutEffect(() => {
         setLoadingGoals(true);
@@ -43,6 +46,10 @@ const LevelScreen = ({ route, navigation }) => {
             fetchGoals(levelId);
         }
     }, [navigation, screenTitle]);
+
+    useEffect(() => {
+        setStateCompleted(settings.completedGoals);
+    }, [ settings ]);
 
     const fetchGoals = async(levelId) => {
         const allGoalsFromLevel = await getGoalsByLevelId(levelId);
@@ -57,11 +64,7 @@ const LevelScreen = ({ route, navigation }) => {
 
     const openGoalDetails = goal => {
         if (goal && goal.data && goal.data.content) {
-            navigation.navigate('GoalScreen', {
-                itemId: goal.id,
-                title: goal.title,
-                content: goal.data.content,
-            });
+            navigation.navigate('GoalScreen', { item: goal });
         }
     };
 
@@ -79,6 +82,7 @@ const LevelScreen = ({ route, navigation }) => {
                         <Goal
                             key={childGoal.id}
                             item={childGoal}
+                            completed={stateCompleted[childGoal.id]}
                             onClick={() => openGoalDetails(childGoal)}
                         />
                     )) }
@@ -98,4 +102,11 @@ const LevelScreen = ({ route, navigation }) => {
     );
 }
 
-export default LevelScreen;
+const mapStateToProps = (state) => {
+    return {
+        settings: state.progress,
+    };
+};
+
+
+export default connect(mapStateToProps)(LevelScreen);

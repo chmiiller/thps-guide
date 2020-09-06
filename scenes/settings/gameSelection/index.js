@@ -1,10 +1,12 @@
 import React, { useState, useLayoutEffect } from 'react';
+import { connect } from 'react-redux';
 import { ActivityIndicator, Button, FlatList, StatusBar, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ATOM_BLUE, ATOM_GRAY, ATOM_YELLOW } from '../../../constants/colors';
 import ErrorMessage from '../../../components/ErrorMessage';
 import { getAvailableGames } from '../../../api/index';
+import Goal from '../../../components/Goal';
 
 const styles = StyleSheet.create({
     safeArea: {
@@ -24,32 +26,42 @@ const styles = StyleSheet.create({
     },
 });
 
-const GameSelectScreen = ({ navigation }) => {
+const GameSelectScreen = ({ navigation, settings, dispatch }) => {
     const [loadingGames, setLoadingGames] = useState(true);
     const [withError, setWithError] = useState(false);
     const [games, setGames] = useState([]);
+    const [selectedGame, setSelectedGame] = useState(null);
 
     useLayoutEffect(() => {
         setLoadingGames(true);
         setWithError(false);
-        fetchLevels();
-    }, []);
+        if (settings && settings.currentGame) {
+            setSelectedGame(settings.currentGame.id);
+            fetchAvailableGames();
+        }
+    }, [settings]);
+
+    const updateGame = (game) => {
+        dispatch({
+            type: 'SELECT_GAME',
+            payload: game,
+        });
+    }
 
     const SelectGameButton = (item) => {
         if (item && item.title) {
             return (
-                <Button
+                <Goal
                     key={item.id}
-                    title={item.title}
-                    onPress={() => {
-                        console.log(' >>>>>>>>>>>>>>>>>>>>>>>>>>>>> selected game: ' + JSON.stringify(item,null,'    '));
-                    }}
+                    completed={item.id === selectedGame}
+                    item={item}
+                    onClick={() => updateGame(item)}
                 />
             );
         }
     }
 
-    const fetchLevels = async() => {
+    const fetchAvailableGames = async() => {
         const availableGames = await getAvailableGames();
         setLoadingGames(false);
         if (availableGames && availableGames.length) {
@@ -88,4 +100,10 @@ const GameSelectScreen = ({ navigation }) => {
     );
 }
 
-export default GameSelectScreen;
+const mapStateToProps = (state) => {
+    return {
+        settings: state.settings,
+    };
+};
+
+export default connect(mapStateToProps)(GameSelectScreen);

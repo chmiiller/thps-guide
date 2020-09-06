@@ -1,5 +1,4 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import { ATOM_BLUE, ATOM_GRAY, ATOM_YELLOW } from '../../constants/colors';

@@ -1,21 +1,12 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
+import { connect } from 'react-redux';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 
 import { ATOM_BLUE, ATOM_GRAY, ATOM_YELLOW, GRAY3 } from '../../constants/colors';
+import NailedButton from '../../components/Nailed';
 
 const styles = StyleSheet.create({
-    nailedButton: {
-        alignItems: 'center',
-        marginVertical: 12,
-        marginHorizontal: 16,
-        borderRadius: 10,
-        borderColor: ATOM_YELLOW,
-        borderWidth: 1,
-        height: 40,
-        padding: 10,
-    },
     scrollView: {
         backgroundColor:ATOM_GRAY,
     },
@@ -23,23 +14,29 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
         margin: 16,
     },
-    nailedText: {
-        fontSize: 14,
-        textAlign: 'center',
-        fontWeight: 'bold',
-        color: ATOM_YELLOW
-    },
 });
 
-const GoalScreen = ({ route, navigation }) => {
-    const [goalTitle, setGoalTitle] = useState(route.params.title);
-    const [goalContent, setGoalContent] = useState(route.params.content);
+const GoalScreen = ({ route, navigation, settings, dispatch }) => {
+    const {item} = route.params;
+    const [goalTitle, setGoalTitle] = useState(item.title);
+    const [goalContent, setGoalContent] = useState(item.data.content);
+    const [goalCompleted, setGoalCompleted] = useState(false);
     
     useLayoutEffect(() => {
         navigation.setOptions({
             title: !goalTitle ? 'Goal' : goalTitle,
         });
     }, [navigation, goalTitle]);
+
+    useEffect(() => {
+        if (settings && settings.completedGoals) {
+            if (settings.completedGoals[item.id]) {
+                setGoalCompleted(true);
+            } else {
+                setGoalCompleted(false);
+            }
+        }
+    }, [ settings ]);
 
     const tableStyle = `
         * { font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: ${ATOM_YELLOW}; }
@@ -55,6 +52,16 @@ const GoalScreen = ({ route, navigation }) => {
         }
     `
 
+    const onNailedButton = () => {
+        if (item) {
+            if (goalCompleted) {
+                dispatch({ type: 'RESET_GOAL', payload: item });
+            } else {
+                dispatch({ type: 'COMPLETE_GOAL', payload: item });
+            }
+        }
+    }
+    
     return (
         <ScrollView style={styles.scrollView} contentContainerStyle={{flexGrow: 1}}>
             <WebView
@@ -74,12 +81,16 @@ const GoalScreen = ({ route, navigation }) => {
                 }}
                 automaticallyAdjustContentInsets={false}
             />
-            <TouchableOpacity style={styles.nailedButton}>
-                <Text style={styles.nailedText}>NAILED2 IT</Text>
-            </TouchableOpacity>
+            <NailedButton onClick={onNailedButton} completed={goalCompleted} />
             <View style={{height: 100}}></View>
         </ScrollView>
     );
 }
 
-export default GoalScreen;
+const mapStateToProps = (state) => {
+    return {
+        settings: state.progress,
+    };
+};
+
+export default connect(mapStateToProps)(GoalScreen);
