@@ -87,6 +87,7 @@ const LevelSelectScreen = ({ navigation, settings }) => {
                     style={styles.flatList}
                     data={levels}
                     renderItem={({item}) => OpenButton(item)}
+                    keyExtractor={item => `level_${item.id}`}
                 />
             );
         }

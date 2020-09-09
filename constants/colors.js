@@ -15,4 +15,6 @@ export const GRAY3 = '#5E5E61';
 export const GRAY4 = '#333333';
 export const ATOM_BLUE = '#719BC4';
 export const ATOM_GRAY = '#343233';
+export const ATOM_GRAY_DARK = '#2b292a';
+export const ATOM_GRAY_LIGHT = '#666264';
 export const ATOM_YELLOW = '#ECDABD';

@@ -85,6 +85,7 @@ const GameSelectScreen = ({ navigation, settings, dispatch }) => {
                     style={{marginTop: 40}}
                     data={games}
                     renderItem={({item}) => SelectGameButton(item)}
+                    keyExtractor={item => `games_${item.id}`}
                 />
             );
         }

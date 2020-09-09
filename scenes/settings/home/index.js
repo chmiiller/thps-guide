@@ -126,6 +126,7 @@ const SettingsHomeScreen = ({ navigation }) => {
                         style={styles.flatList}
                         data={settingsItems}
                         renderItem={({item}) => SettingsOption(item)}
+                        keyExtractor={item => `settings_${item.id}`}
                     />
                 </View>
             );

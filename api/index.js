@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
+import {API_URL, API_KEY} from '../.env.js';
 
-const supabase = createClient();
+const supabase = createClient(API_URL, API_KEY);
 
 let currentId = 2054;
 
