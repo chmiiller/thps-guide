@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
     message: {
         fontSize: 16,
         color: DEFAULT_COLOR,
+        textAlign: 'center'
     },
 });
 

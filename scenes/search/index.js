@@ -1,93 +1,32 @@
 import React from 'react';
-import { StatusBar, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { createStackNavigator } from '@react-navigation/stack';
 
-import { ATOM_GRAY, ATOM_GRAY_LIGHT, ATOM_YELLOW } from '../../constants/colors';
-import { SEARCH_PLACEHOLDER } from '../../constants/strings';
+import { ATOM_BLUE, ATOM_GRAY, ATOM_YELLOW } from '../../constants/colors';
+import SearchComponent from './searchComponent';
+import LevelScreen from '../level';
+import GoalScreen from '../goals';
 
-const styles = StyleSheet.create({
-    barContainer: {
-        backgroundColor: ATOM_GRAY,
-        padding: 8,
-        borderColor: ATOM_YELLOW,
-        borderBottomWidth: 0.5,
-        margin: 8,
-        flexDirection: 'row', 
-        alignItems: 'center', 
-        height: 50,
-    },
-    textInput: {
-        flex: 1,
-        fontSize: 18,
-        color: ATOM_YELLOW,
-        paddingTop: 0,
-        paddingBottom: 0,
-    },
-});
+const Stack = createStackNavigator();
 
 const SearchScreen = () => {
-    const [value, setSearchValue] = React.useState('');
-    const textInputRef = React.createRef();
-
-    const onCancelPress = () => {
-        
-        setSearchValue('');
-        textInputRef.current.blur();
+    const headerStyle = {
+        headerStyle: {
+            backgroundColor: ATOM_GRAY,
+            shadowColor: '#000', // or 'transparent'
+        },
+        headerTintColor: ATOM_YELLOW,
+        headerTitleStyle: {
+            fontWeight: 'bold',
+        },
+        headerBackTitleVisible: false,
     };
-
-    const onChangeText = (text) => {
-        setSearchValue(text);
-    };
-
-    const onSubmitSearch = () => {
-        console.log(' >>>>>>>>>>>>>>>>>>>>>>>>>>>>> send search with value: ' + value);
-    };
-
-    const buttonExtraMargin = { top: 10, bottom: 10, left: 10, right: 10 };
-
+    
     return (
-        <SafeAreaView
-            style={{
-                backgroundColor: ATOM_GRAY,
-                flex: 1,
-                justifyContent: 'space-between',
-                alignItems: 'center'
-            }}
-        >
-        <StatusBar barStyle="light-content" backgroundColor="#6a51ae" />
-            <View style={styles.barContainer}>
-                <TextInput
-                    ref={textInputRef}
-                    selectionColor={ATOM_YELLOW}
-                    placeholderTextColor={ATOM_GRAY_LIGHT}
-                    onSubmitEditing={onSubmitSearch}
-                    placeholder={SEARCH_PLACEHOLDER}
-                    style={[styles.textInput]}
-                    value={value}
-                    onChangeText={onChangeText}
-                    keyboardAppearance={'dark'}
-                />
-                <TouchableOpacity
-                    onPress={onCancelPress}
-                    hitSlop={buttonExtraMargin}
-                >
-                    {(value && value.length) ? (
-                        <Icon
-                            name={'close'}
-                            size={24}
-                            color={ATOM_YELLOW}
-                        />
-                    ) : (
-                        <Icon
-                            name={'magnify'}
-                            size={24}
-                            color={ATOM_YELLOW}
-                        />
-                    )}
-                </TouchableOpacity>
-            </View>
-        </SafeAreaView>
+        <Stack.Navigator initialRouteName="Search" screenOptions={headerStyle}>
+            <Stack.Screen name="Search" options={{headerShown: false}}component={SearchComponent} />
+            <Stack.Screen name="Level" component={LevelScreen} options={ {title: 'The Hangar'} }/>
+            <Stack.Screen name="GoalScreen" component={GoalScreen} />
+        </Stack.Navigator>
     );
 }
 

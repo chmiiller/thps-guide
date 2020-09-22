@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import {API_URL, API_KEY} from '../.env.js';
+import {API_URL, API_KEY} from '../.env/index.js';
 
 const supabase = createClient(API_URL, API_KEY);
 
@@ -99,3 +99,24 @@ export const getGoalsByLevelId = async (levelId) => {
         console.log('error', error);
     }
 }
+
+export const searchLevel = async (term) => {
+    try {
+        const cleanedTerm = cleanStringForSearch(term);
+        const { body } = await supabase
+            .from('levels')
+            .select('*')
+            .order('id', 'sortAscending')
+            .like('searchable', `%${cleanedTerm}%`);
+        return body;
+    } catch (error) {
+        console.log('error', error);
+    }
+}
+
+const cleanStringForSearch = (str) => {
+    let result = str.toLowerCase();
+    result = result.trim();
+    result = result.replace(/([^a-z0-9]+)/gi, ' ');
+    return result;
+};
