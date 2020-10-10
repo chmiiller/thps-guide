@@ -1,27 +1,20 @@
 import React, { useEffect, useState, useLayoutEffect } from 'react';
 import { connect } from 'react-redux';
 import { ActivityIndicator, Button, FlatList, StatusBar, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ATOM_BLUE, ATOM_GRAY, ATOM_YELLOW } from '../../constants/colors';
 import ErrorMessage from '../../components/ErrorMessage';
 import { getLevelsByGameId } from '../../api/index';
+import LevelCard from '../../components/LevelCard';
 
 const styles = StyleSheet.create({
-    safeArea: {
-        backgroundColor: ATOM_GRAY,
-        flex: 1,
-        justifyContent: 'space-between',
-        alignItems: 'center'
-    },
     container: {
         backgroundColor: ATOM_GRAY,
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
+        flexDirection: 'column',
     },
     flatList: {
-        marginTop: 40,
+        marginTop: 0,
     },
 });
 
@@ -46,22 +39,18 @@ const LevelSelectScreen = ({ navigation, settings }) => {
         }
     }, [ currentGame ]);
 
-    const OpenButton = (item) => {
-        if (item && item.name) {
-            return (
-                <Button
-                    key={item.id}
-                    title={item.name}
-                    onPress={() => {
-                        navigation.navigate('Level', {
-                            itemId: item.id,
-                            title: item.name,
-                        });
-                    }}
-                />
-            );
-        }
-    }
+    const LevelButton = ({item, index}) => (
+        <LevelCard
+            item={item}
+            index={index}
+            onClick={() => {
+                navigation.navigate('Level', {
+                    itemId: item.id,
+                    title: item.name,
+                });
+            }}
+        />
+    );
 
     const fetchLevels = async(gameId) => {
         const allLevelsFromSecondGame = await getLevelsByGameId(gameId);
@@ -85,8 +74,9 @@ const LevelSelectScreen = ({ navigation, settings }) => {
             return (
                 <FlatList
                     style={styles.flatList}
+                    contentContainerStyle={{paddingBottom: 96}}
                     data={levels}
-                    renderItem={({item}) => OpenButton(item)}
+                    renderItem={({item, index}) => LevelButton({item, index})}
                     keyExtractor={item => `level_${item.id}`}
                 />
             );
@@ -94,12 +84,12 @@ const LevelSelectScreen = ({ navigation, settings }) => {
     };
 
     return (
-        <SafeAreaView style={styles.safeArea}>
+        <>
             <StatusBar barStyle="light-content" backgroundColor="#6a51ae" />
             <View style={styles.container}>
                 {renderLevelList()}
             </View>
-        </SafeAreaView>
+        </>
     );
 }
 

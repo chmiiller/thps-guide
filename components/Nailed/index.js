@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ATOM_BLUE, ATOM_GRAY, ATOM_YELLOW, GRAY3 } from '../../constants/colors';
+import { NAILED_IT } from '../../constants/strings';
 
 const styles = StyleSheet.create({
     nailedButton: {
@@ -44,7 +45,7 @@ const NailedButton = ({ onClick, completed = false }) => {
     return (
         <View>
             <TouchableOpacity onPress={onNailedClick} style={completed ? styles.nailedButtonSelected : styles.nailedButton} >
-                <Text style={completed ? styles.nailedTextSelected : styles.nailedText}>NAILED2 IT</Text>
+                <Text style={completed ? styles.nailedTextSelected : styles.nailedText}>{NAILED_IT}</Text>
             </TouchableOpacity>
         </View>
     );

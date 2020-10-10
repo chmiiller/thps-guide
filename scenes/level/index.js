@@ -16,11 +16,10 @@ const styles = StyleSheet.create({
         paddingHorizontal: 8,
         flexDirection: 'column',
         justifyContent: 'flex-start',
-        alignItems: 'center',
     },
     scrollView: {
         flexGrow: 1,
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
     },
     extraSpacingView: {
         height: 100,

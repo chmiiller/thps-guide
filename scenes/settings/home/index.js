@@ -1,11 +1,11 @@
 import React, { useState, useLayoutEffect } from 'react';
-import { ActivityIndicator, Button, FlatList, Linking, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Button, FlatList, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { ATOM_BLUE, ATOM_GRAY, ATOM_YELLOW } from '../../../constants/colors';
 import { APP_VERSION } from '../../../constants/strings';
 import ErrorMessage from '../../../components/ErrorMessage';
+import ListItemWithDetails from '../../../components/ListItemWithDetails';
 import { getSettings } from '../../../api/index';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const styles = StyleSheet.create({
     container: {
@@ -22,13 +22,6 @@ const styles = StyleSheet.create({
     },
     flatList: {
         width: '100%',
-    },
-    flatListItemContainer: {
-        padding: 8,
-        flexDirection: 'row',
-        backgroundColor: ATOM_GRAY,
-        justifyContent: 'space-between',
-        alignItems: 'center',
     },
     versionContainer: {
         flex: 1,
@@ -94,21 +87,12 @@ const SettingsHomeScreen = ({ navigation }) => {
 
     const SettingsOption = (item) => {
         if (item && item.title) {
-            return (
-                <View style={styles.flatListItemContainer}>
-                    <Button
-                        color={ATOM_YELLOW}
-                        key={`settings_${item.id}`}
-                        title={item.title}
-                        onPress={() => settingsOptionClick(item)}
-                    />
-                    <Icon
-                        name={(item.type === 'coffee') ? 'heart-outline' : 'chevron-right'}
-                        size={(item.type === 'coffee') ? 22 : 25}
-                        color={ATOM_YELLOW}
-                    />
-                </View>
-            );
+            const icon = (item.type === 'coffee') ? {name: 'heart-outline', size: 22} : null;
+            return (<ListItemWithDetails
+                item={item}
+                onClick={() => settingsOptionClick(item)}
+                icon={icon}
+            />);
         }
     }
 
