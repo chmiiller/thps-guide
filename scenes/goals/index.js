@@ -9,10 +9,22 @@ import NailedButton from '../../components/Nailed';
 const styles = StyleSheet.create({
     scrollView: {
         backgroundColor:ATOM_GRAY,
+        flex: 1,
+        flexDirection: 'column',
+    },
+    webViewContainer: {
+        flex: 8,
+        margin: 16
+    },
+    buttonContainer: {
+        flex: 1,
+        flexDirection: 'column',
+        alignContent: 'center',
+        justifyContent: 'center',
+        marginBottom: 80,
     },
     webView: {
-        backgroundColor: 'transparent',
-        margin: 16,
+        backgroundColor: 'transparent'
     },
 });
 
@@ -63,27 +75,30 @@ const GoalScreen = ({ route, navigation, settings, dispatch }) => {
     }
     
     return (
-        <ScrollView style={styles.scrollView} contentContainerStyle={{flexGrow: 1}}>
-            <WebView
-                originWhitelist={['*']}
-                style={styles.webView}
-                source={{
-                    html: `
-                        <!DOCTYPE html>
-                        <html>
-                            <head><meta name="viewport" content="width=device-width"></head>
-                            <style>${tableStyle}</style>
-                            <body style="margin: 0; padding: 0;">
-                                <div style="height: 600px; width: 100%;">${goalContent}</div>
-                            </body>
-                        </html>
-                    `
-                }}
-                automaticallyAdjustContentInsets={false}
-            />
-            <NailedButton onClick={onNailedButton} completed={goalCompleted} />
-            <View style={{height: 100}}></View>
-        </ScrollView>
+        <View style={styles.scrollView}>   
+            <View style={styles.webViewContainer}>
+                <WebView
+                    style={styles.webView}
+                    originWhitelist={['*']}
+                    source={{
+                        html: `
+                            <!DOCTYPE html>
+                            <html>
+                                <head><meta name="viewport" content="width=device-width"></head>
+                                <style>${tableStyle}</style>
+                                <body style="margin: 0; padding: 0;">
+                                    <div style="height: 600px; width: 100%;">${goalContent}</div>
+                                </body>
+                            </html>
+                        `
+                    }}
+                    automaticallyAdjustContentInsets={false}
+                />
+            </View>
+            <View style={styles.buttonContainer}>
+                <NailedButton onClick={onNailedButton} completed={goalCompleted} />
+            </View>
+        </View>
     );
 }
 

@@ -18,11 +18,13 @@ const styles = StyleSheet.create({
     },
 });
 
-const LevelSelectScreen = ({ navigation, settings }) => {
+const LevelSelectScreen = ({ navigation, settings, progress }) => {
     const [loadingLevels, setLoadingLevels] = useState(true);
     const [withError, setWithError] = useState(false);
     const [levels, setGameLevels] = useState([]);
     const [currentGame, setCurrentGame] = useState(null);
+    const [completedGoals, setCompletedGoals] = useState(null);
+    const [groupedCompletedGoals, setGroupedCompletedGoals] = useState(null);
 
     useLayoutEffect(() => {
         setLoadingLevels(true);
@@ -38,24 +40,55 @@ const LevelSelectScreen = ({ navigation, settings }) => {
             fetchLevels(currentGame.id);
         }
     }, [ currentGame ]);
+    
+    useEffect(() => {
+        if (progress && progress.completedGoals) {
+            setCompletedGoals(progress.completedGoals);
+            countCompletedGoals();
+        }
+    }, [ progress ]);
 
-    const LevelButton = ({item, index}) => (
-        <LevelCard
-            item={item}
-            index={index}
-            onClick={() => {
-                navigation.navigate('Level', {
-                    itemId: item.id,
-                    title: item.name,
-                });
-            }}
-        />
-    );
+    const countCompletedGoals = () => {
+        if (completedGoals && Object.keys(completedGoals)) {
+            const goalsArray = Object.keys(completedGoals).map(id => {
+                return { id: completedGoals[id].id, level_id: completedGoals[id].level_id};
+            });
+            const grouped = groupGoalsByLevelId(goalsArray, 'level_id');
+            console.log(` >>>>>>>>>>>>>>>>>>>>>>>>>>> groupedGoals: ${JSON.stringify(grouped,null,'    ')} `);
+            setGroupedCompletedGoals(grouped);
+        }
+    };
+
+    const groupGoalsByLevelId = function(xs, key) {
+        return xs.reduce(function(rv, x) {
+          (rv[x[key]] = rv[x[key]] || []).push(x.id);
+          return rv;
+        }, {});
+      };
+
+    const LevelButton = ({item, index}) => {
+        // console.log(`  item: ${JSON.stringify(item,null,'    ')} `);
+        if (groupedCompletedGoals && groupedCompletedGoals[item.id.toString()]) {
+            console.log(` >>>>>>>>>>>>>>>>>>>>>>>>>>>> count: ${groupedCompletedGoals[item.id.toString()].length} `);
+        }
+        return (
+            <LevelCard
+                item={item}
+                index={index}
+                onClick={() => {
+                    navigation.navigate('Level', {
+                        itemId: item.id,
+                        title: item.name,
+                    });
+                }}
+            />
+        )
+    };
 
     const fetchLevels = async(gameId) => {
-        const allLevelsFromSecondGame = await getLevelsByGameId(gameId);
-        if (allLevelsFromSecondGame && allLevelsFromSecondGame.length) {
-            setGameLevels(allLevelsFromSecondGame);
+        const allLevelsForSelectedGame = await getLevelsByGameId(gameId);
+        if (allLevelsForSelectedGame && allLevelsForSelectedGame.length) {
+            setGameLevels(allLevelsForSelectedGame);
             setLoadingLevels(false);
             setWithError(false);
         } else {
@@ -96,6 +129,7 @@ const LevelSelectScreen = ({ navigation, settings }) => {
 const mapStateToProps = (state) => {
     return {
         settings: state.settings,
+        progress: state.progress,
     };
 };
 export default connect(mapStateToProps)(LevelSelectScreen);

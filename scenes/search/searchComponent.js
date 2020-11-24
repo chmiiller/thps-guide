@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { ATOM_GRAY, ATOM_GRAY_LIGHT, ATOM_YELLOW } from '../../constants/colors';
 import { SEARCH_PLACEHOLDER, SEARCH_NOT_FOUND } from '../../constants/strings';
-import LevelResult from '../../components/SearchResults/level';
+import LevelCard from '../../components/LevelCard';
 import ErrorMessage from '../../components/ErrorMessage';
 import { searchLevel } from '../../api';
 
@@ -79,18 +79,18 @@ const SearchScreen = ({ navigation }) => {
 
     const buttonExtraMargin = { top: 10, bottom: 10, left: 10, right: 10 };
 
-    const ResultButton = (item) => {
-        if (item && item.name) {
-            return (
-                <LevelResult item={item} onClick={() => {
-                    navigation.navigate('Level', {
-                        itemId: item.id,
-                        title: item.name,
-                    });
-                }}/>
-            );
-        }
-    }
+    const LevelButton = ({item, index}) => (
+        <LevelCard
+            item={item}
+            index={index}
+            onClick={() => {
+                navigation.navigate('Level', {
+                    itemId: item.id,
+                    title: item.name,
+                });
+            }}
+        />
+    );
 
     const renderSearchContent = () => {
         if (withError) {
@@ -108,7 +108,7 @@ const SearchScreen = ({ navigation }) => {
                 <FlatList
                     style={styles.flatList}
                     data={searchResults}
-                    renderItem={({item}) => ResultButton(item)}
+                    renderItem={({item, index}) => LevelButton({item, index})}
                     keyExtractor={item => `result_${item.id}`}
                 />
             )

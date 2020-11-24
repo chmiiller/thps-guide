@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     },
 });
 
-const LevelScreen = ({ route, navigation, settings }) => {
+const LevelScreen = ({ route, navigation, progress }) => {
     const [screenTitle, setScreenTitle] = useState(route.params.title);
     const [goals, setGoals] = useState([]);
     const [loadingGoals, setLoadingGoals] = useState(true);
@@ -47,8 +47,8 @@ const LevelScreen = ({ route, navigation, settings }) => {
     }, [navigation, screenTitle]);
 
     useEffect(() => {
-        setStateCompleted(settings.completedGoals);
-    }, [ settings ]);
+        setStateCompleted(progress.completedGoals);
+    }, [ progress ]);
 
     const fetchGoals = async(levelId) => {
         const allGoalsFromLevel = await getGoalsByLevelId(levelId);
@@ -103,7 +103,7 @@ const LevelScreen = ({ route, navigation, settings }) => {
 
 const mapStateToProps = (state) => {
     return {
-        settings: state.progress,
+        progress: state.progress,
     };
 };
 
